@@ -81,12 +81,6 @@ _format_char(std::ostream &out, const T &data, Format &fmt)
     out << data;
 }
 
-// std::basic_ostream<char>& operator << (std::basic_ostream<char>& os, const std::__cxx11::basic_stringstream<char> ss)
-// {
-//     os << ss.str();
-//     return os;
-// }
-// error: no match for 'operator<<' (operand types are 'std::ostream {aka std::basic_ostream<char>}' and 'const std::__cxx11::basic_stringstream<char>')
 
 template <typename T>
 inline void
@@ -143,62 +137,6 @@ _format_integer(std::ostream &out, const T &data, Format &fmt)
         out.setf(std::ios::uppercase);
 
     out << data;
-}
-
-inline void
-_format_integer(std::ostream &out, const std::__cxx11::basic_stringstream<char> &data, Format &fmt)
-{
-    using namespace std;
-
-    switch (fmt.base) {
-      case Format::hex:
-        out.setf(std::ios::hex, std::ios::basefield);
-        break;
-
-      case Format::oct:
-        out.setf(std::ios::oct, std::ios::basefield);
-        break;
-
-      case Format::dec:
-        out.setf(std::ios::dec, std::ios::basefield);
-        break;
-    }
-
-    if (fmt.alternate_form) {
-        if (!fmt.fill_zero)
-            out.setf(std::ios::showbase);
-        else {
-            switch (fmt.base) {
-              case Format::hex:
-                out << "0x";
-                fmt.width -= 2;
-                break;
-              case Format::oct:
-                out << "0";
-                fmt.width -= 1;
-                break;
-              case Format::dec:
-                break;
-            }
-        }
-    }
-
-    if (fmt.fill_zero)
-        out.fill('0');
-
-    if (fmt.width > 0)
-        out.width(fmt.width);
-
-    if (fmt.flush_left && !fmt.fill_zero)
-        out.setf(std::ios::left);
-
-    if (fmt.print_sign)
-        out.setf(std::ios::showpos);
-
-    if (fmt.uppercase)
-        out.setf(std::ios::uppercase);
-
-    out << data.str();
 }
 
 template <typename T>
@@ -363,12 +301,6 @@ format_integer(std::ostream &out, unsigned char data, Format &fmt)
 inline void
 format_integer(std::ostream &out, signed char data, Format &fmt)
 { _format_integer(out, (int)data, fmt); }
-inline void
-format_integer(std::ostream &out, const unsigned char *data, Format &fmt)
-{ _format_integer(out, (uintptr_t)data, fmt); }
-inline void
-format_integer(std::ostream &out, const signed char *data, Format &fmt)
-{ _format_integer(out, (uintptr_t)data, fmt); }
 #if 0
 inline void
 format_integer(std::ostream &out, short data, Format &fmt)
